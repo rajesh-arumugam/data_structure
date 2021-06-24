@@ -89,6 +89,7 @@ class AVLTree:
         count = self.countTrucks(tNode)
         print(f'Total number of vehicles entered in the warehouse: {count}')
         self.inorder(tNode)
+        print('------------------------------------')
 
     def tcheckTruckRec(self, prompt):
         if prompt is not None:
@@ -129,18 +130,55 @@ class AVLTree:
                     print(f'Vehicle id {result[0]} entered {result[2]} times into the system. It just completed an order')
                 if result[1] % 2 != 0:
                     print(f'Vehicle id {result[0]} entered {result[2]} times into the system. It is currently fulfilling an open order')
+            print('------------------------------------')
 
     def tprintOrderStatus(self, prompt):
-        print('tprintOrderStatus')
+        if prompt is not None:
+            # print('tupdateTruckRec')
+            split_prompt = prompt.split(':')
+            # print(split_prompt)
+            truck_id = int(split_prompt[1].lstrip())
+            print(f'The following status of {truck_id} orders:')
+            self._printOrderStatus(truck_id)
+            
 
     def _printOrderStatus(self, targetorders):
-        return
+        print('counter - ',self.root.chkoutCtr, self.root.UId)
+        result = list(self.getList(self.root))
+        # print(result)
+        result = filter(lambda y: y[1]> 0, result)
+        print(list(result))
+        for x in list(result):
+            print(x)
+        # print(data(result))
+        print('Open Orders: {}')
+        print('Closed Orders: {}')
+        print('Yet to be fulfilled: {}')
+        print('------------------------------------')
+
+    def getList(self, root):
+        if not root:
+            return
+        yield from self.getList(root.left)
+        yield root.UId,root.chkoutCtr
+        yield from self.getList(root.right)
 
     def thighFreqTrucks(self, prompt):
-        print('thighFreqTrucks')
+        if prompt is not None:
+            # print('tupdateTruckRec')
+            split_prompt = prompt.split(':')
+            # print(split_prompt)
+            frequency = int(split_prompt[1].lstrip())
+            print(f'Vehicles that moved in/out more than {frequency} times are:')
+            self._highFreqTrucks(self.root, frequency)
 
     def _highFreqTrucks(self, tNode, frequency):
-        return
+        tree = list(self.getList(tNode))
+        # print(tree)
+        for x in tree:
+            if x[1] > frequency:
+                print(x)
+        print('------------------------------------')
 
     def tmaxDeliveries(self, prompt):
         print('tmaxDeliveries')
@@ -183,8 +221,7 @@ def main():
                "printOrderStatus: 11", "highFreqTrucks: 2", "maxDeliveries",
                "availTrucks", "updateTruckRec: 112", "updateTruckRec: 453",
                "printTruckRec"]
-    # prompts = ["checkTruckRec: 21","checkTruckRec: 20","checkTruckRec: 30",
-    #            "checkTruckRec: 10"]
+    prompts = ["printOrderStatus: 11"]
     for prompt in  prompts:
         # print(prompt)
         tree.checkPrompt(prompt)
