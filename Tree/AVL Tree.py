@@ -43,7 +43,7 @@ class AVLTree:
             else:
                 tNode.chkoutCtr += 1
                 # print('Value {} already inserted, counter - {}'.format(Uid, tNode.chkoutCtr))
-            if tNode.chkoutCtr > 4:
+            if tNode.chkoutCtr > 2*self.max_count:
                 pass
                 # print('vehicle id {} no longer available for service'.format(Uid))
         except:
@@ -51,11 +51,8 @@ class AVLTree:
 
     def tupdateTruckRec(self, prompt):
         if prompt is not None:
-            # print('tupdateTruckRec')
             split_prompt = prompt.split(':')
-            # print(split_prompt)
             truck_id = int(split_prompt[1].lstrip())
-            # print(truck_id)
             self._updateTruckRec(self.root, truck_id)
 
     def _updateTruckRec(self, tNode, Uid):
@@ -63,7 +60,6 @@ class AVLTree:
             self._readTruckRec(tNode, Uid)
             print(f'Vehicle Id {Uid} record updated')
             print('------------------------------------')
-        return
 
     def tprintTruckRec(self, prompt):
         if prompt is not None:
@@ -248,13 +244,24 @@ class AVLTree:
 
 def main():
     tree = AVLTree()
-    truck_ids = [2,34,453,56,34,643,231,31,31,453,34,34,34]
+    # truck_ids = [2,34,453,56,34,643,231,31,31,453,34,34,34]
+    def readfile(file):
+        with open(file, 'r') as f:
+            data = f.read().splitlines()
+        return data
+
+    input_file = 'inputPS2.txt'
+    promp_file = 'promptsPS2.txt'
+    input_data = readfile(input_file)
+    truck_ids = list(map(int, input_data))
+    prompts = readfile(promp_file)
+
     for truck in truck_ids:
         tree.treadTruckRec(truck)
-    prompts = ["printTruckRec", "checkTruckRec: 31", "checkTruckRec: 542",
-               "printOrderStatus: 11", "highFreqTrucks: 2", "maxDeliveries",
-               "availTrucks", "updateTruckRec: 112", "updateTruckRec: 453",
-               "printTruckRec"]
+    # prompts = ["printTruckRec", "checkTruckRec: 31", "checkTruckRec: 542",
+    #            "printOrderStatus: 11", "highFreqTrucks: 2", "maxDeliveries",
+    #            "availTrucks", "updateTruckRec: 112", "updateTruckRec: 453",
+    #            "printTruckRec"]
     for prompt in  prompts:
         tree.checkPrompt(prompt)
 
