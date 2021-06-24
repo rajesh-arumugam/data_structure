@@ -10,6 +10,7 @@ class AVLTree:
     def __init__(self):
         self.root = None
         self.max_count = None
+        self.count = 0
 
     def treadTruckRec(self, value):
         try:
@@ -119,6 +120,7 @@ class AVLTree:
 
     def _checkTruckRec(self, tNode, Uid):
         if type(Uid) == int:
+            print(Uid)
             result = self.searchTree(tNode, Uid)
             # print(result)
             if result[1] == -1:
@@ -143,9 +145,7 @@ class AVLTree:
             
 
     def _printOrderStatus(self, targetorders):
-        print('counter - ',self.root.chkoutCtr, self.root.UId)
         result = list(self.getList(self.root))
-        # print(result)
         result = filter(lambda y: y[1]> 0, result)
         print(list(result))
         for x in list(result):
@@ -174,23 +174,58 @@ class AVLTree:
 
     def _highFreqTrucks(self, tNode, frequency):
         tree = list(self.getList(tNode))
-        # print(tree)
         for x in tree:
             if x[1] > frequency:
                 print(x)
         print('------------------------------------')
 
     def tmaxDeliveries(self, prompt):
-        print('tmaxDeliveries')
+        self._maxDeliveries(self.root)
 
     def _maxDeliveries(self, tNode):
-        return
+        print(f'maxDeliveries: {self.max_count}')
+        tree = list(self.getList(tNode))
+        # print(tree)
+        count = []
+        for x in tree:
+            if x[1] >= 2*self.max_count:
+                # print(x)
+                count.append(x)
+        print(f'{len(count)} Vehicle Ids did their maximum deliveries:')
+        print(count)
+        print('------------------------------------')
 
-    def tavailTrucks(self, prompt):
-        print('tmaxDeliveries')
+    # def tavailTrucks(self, prompt):
+    #     self._availTrucks(self.root)
+
+    def searchTreeRecord(self, root):
+        # print(printCount)
+        if root is None:
+                return
+        else:
+            self.searchTreeRecord(root.left)
+            if (root.chkoutCtr % 2 == 0 and root.chkoutCtr < 2*self.max_count) or root.chkoutCtr == 0:
+                print(root.UId)
+            self.searchTreeRecord(root.right)
+
+
+    def countAvailTruck(self, root):
+        try:
+            if root is None:
+                return 0
+            else:
+                self.countAvailTruck(root.left)
+                if (root.chkoutCtr % 2 == 0 and root.chkoutCtr < 2*self.max_count) or root.chkoutCtr == 0:
+                    self.count += 1
+                self.countAvailTruck(root.right)
+        except Exception as e:
+            print(str(e))
 
     def _availTrucks(self, tNode):
-        return
+        self.countAvailTruck(tNode)
+        print(f'{self.count} Vehicle Ids that are currently available to deliver supplies:')
+        self.searchTreeRecord(tNode)
+        print('------------------------------------')
 
     def checkPrompt(self, prompt):
         if prompt is not None:
@@ -208,22 +243,19 @@ class AVLTree:
             if 'maxDeliveries' in prompt:
                 self.tmaxDeliveries(prompt)
             if 'availTrucks' in prompt:
-                self.tavailTrucks(prompt)
+                self._availTrucks(self.root)
 
 
 def main():
     tree = AVLTree()
     truck_ids = [2,34,453,56,34,643,231,31,31,453,34,34,34]
     for truck in truck_ids:
-        # print(truck)
         tree.treadTruckRec(truck)
     prompts = ["printTruckRec", "checkTruckRec: 31", "checkTruckRec: 542",
                "printOrderStatus: 11", "highFreqTrucks: 2", "maxDeliveries",
                "availTrucks", "updateTruckRec: 112", "updateTruckRec: 453",
                "printTruckRec"]
-    prompts = ["printOrderStatus: 11"]
     for prompt in  prompts:
-        # print(prompt)
         tree.checkPrompt(prompt)
 
 
