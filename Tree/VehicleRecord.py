@@ -4,6 +4,7 @@ class TruckNode:
         self.chkoutCtr = 0
         self.left = None
         self.right = None
+        self.height = 1
 
 
 class AVLTree:
@@ -65,7 +66,7 @@ class AVLTree:
             return
         else:
             self.searchTreeRecord(root.left)
-            if (root.chkoutCtr % 2 == 0 and root.chkoutCtr < 2*self.max_count) or root.chkoutCtr == 0:
+            if (root.chkoutCtr % 2 == 0 and root.chkoutCtr < 2 * self.max_count) or root.chkoutCtr == 0:
                 print(root.UId)
             self.searchTreeRecord(root.right)
 
@@ -75,11 +76,41 @@ class AVLTree:
                 return 0
             else:
                 self.countAvailTruck(root.left)
-                if (root.chkoutCtr % 2 == 0 and root.chkoutCtr < 2*self.max_count) or root.chkoutCtr == 0:
+                if (root.chkoutCtr % 2 == 0 and root.chkoutCtr < 2 * self.max_count) or root.chkoutCtr == 0:
                     self.count += 1
                 self.countAvailTruck(root.right)
         except Exception as e:
             print(str(e))
+
+    def getHeight(self, current):
+        if current is None:
+            return 0
+        else:
+            return current.height
+
+    def getBalance(self, current):
+        if current is None:
+            return 0
+        else:
+            return self.getHeight(current.left) - self.getHeight(current.right)
+
+    def rotateRight(self, current):
+        y = current.right
+        temp = y.left
+        y.left = current
+        current.right = temp
+        current.height = max(self.getHeight(current.left), self.getHeight(current.right)) + 1
+        y.height = max(self.getHeight(y.left), self.getHeight(y.right)) + 1
+        return current
+
+    def rotateLeft(self, current):
+        y = current.right
+        temp = y.left
+        y.left = current
+        current.right = temp
+        current.height = max(self.getHeight(current.left), self.getHeight(current.right)) + 1
+        y.height = max(self.getHeight(y.left), self.getHeight(y.right)) + 1
+        return y
 
     def triggerReadTruckRec(self, value):
         """
@@ -121,6 +152,23 @@ class AVLTree:
             tNode.chkoutCtr += 1
             if tNode.chkoutCtr > 2 * self.max_count:
                 print(f'vehicle id {Uid} no longer available for service')
+        tNode.height = max(self.getHeight(tNode.left), self.getHeight(tNode.right)) + 1
+        balance = self.getBalance(tNode)
+        # left left
+        if balance > 1 and Uid < tNode.left.UId:
+            return self.rotateRight(tNode)
+        # right right
+        if balance < -1 and Uid > tNode.right.UId:
+            return self.rotateLeft(tNode)
+        # left right
+        if balance > 1 and Uid > tNode.left.UId:
+            tNode.left = self.rotateLeft(tNode.left)
+            return self.rotateRight(tNode)
+        # right left
+        if balance < -1 and Uid < tNode.right.UId:
+            tNode.right = self.rotateRight(tNode.right)
+            return self.rotateLeft(tNode)
+        return tNode
 
     def triggerUpdateTruckRec(self, prompt):
         """
@@ -201,7 +249,7 @@ class AVLTree:
             truck_id = int(split_prompt[1].lstrip())
             print(f'The following status of {truck_id} orders:')
             self._printOrderStatus(truck_id)
-            
+
     def _printOrderStatus(self, targetorders):
         """
         function to get the number of open, closed and yet to be fulfilled orders
@@ -219,7 +267,7 @@ class AVLTree:
             close_order_count += result
         open_order_count = 0
         for x in open:
-            result = x[1]+1 // 2
+            result = x[1] + 1 // 2
             open_order_count += result
         balance = targetorders - (open_order_count + close_order_count)
         print(f'Open Orders: {open_order_count}')
@@ -272,7 +320,7 @@ class AVLTree:
         tree = list(self.getList(tNode))
         count = []
         for x in tree:
-            if x[1] >= 2*self.max_count:
+            if x[1] >= 2 * self.max_count:
                 count.append(x)
         print(f'{len(count)} Vehicle Ids did their maximum deliveries:')
         self.traverse(tNode)
@@ -333,9 +381,6 @@ def main():
                "printTruckRec", "highFreqTrucks: 2", "maxDeliveries"]
     for prompt in prompts:
         tree.checkPrompt(prompt)
-
-
-
 
 
 if __name__ == '__main__':
