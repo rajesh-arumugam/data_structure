@@ -1,0 +1,10 @@
+printTruckRec
+checkTruckRec: 3
+checkTruckRec: 54
+printOrderStatus: 11
+highFreqTrucks: 2
+maxDeliveries
+availTrucks
+updateTruckRec: 11
+updateTruckRec: 45
+printTruckRec
