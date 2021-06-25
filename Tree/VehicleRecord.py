@@ -1,3 +1,6 @@
+import sys
+
+
 class TruckNode:
     def __init__(self, Uid):
         self.UId = Uid
@@ -378,12 +381,14 @@ def main():
     for truck in truck_ids:
         print(truck)
         tree.triggerReadTruckRec(truck)
+    sys.stdout = open("outputsPS2.txt", "w")
     prompts = ["printTruckRec", "checkTruckRec: 31", "checkTruckRec: 542",
                "printOrderStatus: 11", "highFreqTrucks: 2", "maxDeliveries",
                "availTrucks", "updateTruckRec: 112", "updateTruckRec: 453",
                "printTruckRec", "highFreqTrucks: 2", "maxDeliveries"]
     for prompt in prompts:
         tree.checkPrompt(prompt)
+    sys.stdout.close()
 
 
 if __name__ == '__main__':
