@@ -95,13 +95,15 @@ class AVLTree:
             return self.getHeight(current.left) - self.getHeight(current.right)
 
     def rotateRight(self, current):
-        y = current.right
-        temp = y.left
-        y.left = current
-        current.right = temp
+        y = current.left
+        temp = y.right
+
+        y.right = current
+        current.left = temp
+
         current.height = max(self.getHeight(current.left), self.getHeight(current.right)) + 1
         y.height = max(self.getHeight(y.left), self.getHeight(y.right)) + 1
-        return current
+        return y
 
     def rotateLeft(self, current):
         y = current.right
@@ -374,6 +376,7 @@ def main():
     # prompts = readfile(promp_file)
     truck_ids = [2, 34, 453, 56, 34, 643, 231, 31, 31, 453, 34, 34, 34]
     for truck in truck_ids:
+        print(truck)
         tree.triggerReadTruckRec(truck)
     prompts = ["printTruckRec", "checkTruckRec: 31", "checkTruckRec: 542",
                "printOrderStatus: 11", "highFreqTrucks: 2", "maxDeliveries",
